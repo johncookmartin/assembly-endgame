@@ -1,0 +1,42 @@
+name: Deploy Assembly-Endgame App to Github pages
+
+on:
+   workflow_dispatch:
+   push:
+      branches:
+         - main
+
+jobs:
+   build-deploy:
+      runs-on: ubuntu-latest
+
+      permissions:
+         contents: read
+         id-token: write
+         pages: write
+
+      steps:
+         - name: Checkout code
+           uses: actions/checkout@v3
+
+         - name: Setup Node.js
+           uses: actions/setup-node@v3
+           with:
+               node-version: 22.9.0
+         
+         - name: Install Dependencies
+           run: npm install
+
+         - name: Build Project
+           run: npm run build
+           
+         - name: Upload artifacts
+           uses: actions/upload-pages-artifact@v3
+           with:
+             path: ./dist
+             name: github-pages
+
+         - name: Deploy to Github Pages
+           uses: actions/deploy-pages@v4
+           with:
+             artifact_name: github-pages
